@@ -1,1 +1,1 @@
-web: python rekla.py
+web: python3 rekla.py
