@@ -8,14 +8,24 @@ import botan
 import config
 import telebot
 import os
-import flask
-from flask import Flask, request
 from time import sleep
 from telebot import types
+import requests
 
-server = Flask(__name__)
+url = "https://api.telegram.org/bot458642918:AAGiZ-RhcpvZWGLgOqPvQWwL7fXL2h47lEw/"
 bot = telebot.TeleBot("458642918:AAGiZ-RhcpvZWGLgOqPvQWwL7fXL2h47lEw")
 botan_key = 'c4307719-7cfc-4af1-bf3c-bbf43fb49e7a'
+
+def get_updates_json(request):
+    response = requests.get(request + 'getUpdates')
+    return response.json()
+
+
+def last_update(data):
+    results = data['result']
+    total_updates = len(results) - 1
+    return results[total_updates]
+
 
 @bot.message_handler(func=lambda message: message.text in ["/about@rickrobot","/about"])
 def start(message):
@@ -35,17 +45,32 @@ def start(message):
 def start(message):
     bot.send_message(message.chat.id,text=("Crypto signals based on professional analysis and leaked info from paid groups! Other people pay monthly 0.01-0.08btc to see these calls👎🏻🤢 And YOU have an amazing opportunity to see it all for FREE!💥😎 https://t.me/take_your_profit"))
 
+def __init__(self, token):
+    self.token = token
+    self.api_url = "https://api.telegram.org/bot458642918:AAGiZ-RhcpvZWGLgOqPvQWwL7fXL2h47lEw/".format(token)
+    
+    def get_updates(self, offset=None, timeout=30):
+        method = 'getUpdates'
+        params = {'timeout': timeout, 'offset': offset}
+        resp = requests.get(self.api_url + method, params)
+        result_json = resp.json()['result']
+        return result_json
 
-@server.route("458642918:AAGiZ-RhcpvZWGLgOqPvQWwL7fXL2h47lEw", methods=['POST'])
-def getMessage():
-    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
-    return "!", 200
-
-@server.route("458642918:AAGiZ-RhcpvZWGLgOqPvQWwL7fXL2h47lEw")
-def webhook():
-    bot.remove_webhook()
-    bot.set_webhook(url="https://fathomless-ocean-36243.herokuapp.com/458642918:AAGiZ-RhcpvZWGLgOqPvQWwL7fXL2h47lEw")
-    return "!", 200
+def send_message(self, chat_id, text):
+    params = {'chat_id': chat_id, 'text': text}
+    method = 'sendMessage'
+    resp = requests.post(self.api_url + method, params)
+    return resp
+    
+    def get_last_update(self):
+        get_result = self.get_updates()
+        
+        if len(get_result) > 0:
+            last_update = get_result[-1]
+        else:
+            last_update = get_result[len(get_result)]
+        
+        return last_update
 
 
 
